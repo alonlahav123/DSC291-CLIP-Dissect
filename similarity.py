@@ -51,8 +51,17 @@ def soft_wpmi(clip_feats, target_feats, top_k=100, a=10, lam=1, device='cuda',
     
     with torch.no_grad():
         torch.cuda.empty_cache()
-        clip_feats = torch.nn.functional.softmax(a*clip_feats, dim=1)
-
+        # clip_feats = torch.nn.functional.softmax(a*clip_feats, dim=1)
+        # ---------- BEGIN memory-safe patch ----------
+        block_size = 2048      # ↓ set smaller (2048/1024) if you still OOM
+    
+        parts = []
+        for c in range(0, clip_feats.shape[1], block_size):
+            part = torch.nn.functional.softmax(a*clip_feats[:, c:c+block_size], dim=1)
+            parts.append(part)
+        clip_feats = torch.cat(parts, dim=1)
+        del parts
+        # ---------- END patch ----------
         inds = torch.topk(target_feats, dim=0, k=top_k)[1]
         prob_d_given_e = []
 
