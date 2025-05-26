@@ -11,19 +11,19 @@ import similarity
 
 parser = argparse.ArgumentParser(description='CLIP-Dissect')
 
-parser.add_argument("--clip_model", type=str, default="ViT-B/16", 
+parser.add_argument("--clip_model", type=str, default="RN50", #default="ViT-B/16", 
                     choices=['RN50', 'RN101', 'RN50x4', 'RN50x16', 'RN50x64', 'ViT-B/32', 'ViT-B/16', 'ViT-L/14'],
                    help="Which CLIP-model to use")
 parser.add_argument("--target_model", type=str, default="resnet50", 
                    help=""""Which model to dissect, supported options are pretrained imagenet models from
                         torchvision and resnet18_places""")
-parser.add_argument("--target_layers", type=str, default="conv1,layer1,layer2,layer3,layer4",
+parser.add_argument("--target_layers", type=str, default="layer4", #default="conv1,layer1,layer2,layer3,layer4",
                     help="""Which layer neurons to describe. String list of layer names to describe, separated by comma(no spaces). 
                           Follows the naming scheme of the Pytorch module used""")
 parser.add_argument("--d_probe", type=str, default="broden", 
                     choices = ["imagenet_broden", "cifar100_val", "imagenet_val", "broden", "imagenet_broden"])
 parser.add_argument("--concept_set", type=str, default="data/20k.txt", help="Path to txt file containing concept set")
-parser.add_argument("--batch_size", type=int, default=200, help="Batch size when running CLIP/target model")
+parser.add_argument("--batch_size", type=int, default=50, help="Batch size when running CLIP/target model")
 parser.add_argument("--device", type=str, default="cuda", help="whether to use GPU/which gpu")
 parser.add_argument("--activation_dir", type=str, default="saved_activations", help="where to save activations")
 parser.add_argument("--result_dir", type=str, default="results", help="where to save results")
